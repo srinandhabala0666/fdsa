@@ -1,0 +1,29 @@
+import pandas as pd
+import scipy.stats as stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+
+# Example dataset
+df = pd.DataFrame({
+    'A': [25, 30, 28, 32, 35],
+    'B': [20, 22, 19, 24, 23],
+    'C': [30, 35, 33, 31, 36],
+    'D': [28, 27, 29, 26, 30]
+})
+
+# One-Way ANOVA using scipy
+fvalue, pvalue = stats.f_oneway(df['A'], df['B'], df['C'], df['D'])
+print("F-value:", fvalue)
+print("P-value:", pvalue)
+
+# Convert data to long format for statsmodels
+df_melt = df.melt(var_name='treatments', value_name='value')
+
+# OLS model
+model = ols('value ~ C(treatments)', data=df_melt).fit()
+
+# ANOVA table
+anova_table = sm.stats.anova_lm(model, typ=2)
+
+print("\nANOVA Table:")
+print(anova_table)
